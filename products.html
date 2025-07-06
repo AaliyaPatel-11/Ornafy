@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Jewelry Store</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Great Vibes', cursive;
+            background-color: rgb(230, 220, 218);
+        }
+        /* Navbar styles */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #B5828C;
+            padding: 10px 20px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+        .navbar .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+        }
+        .navbar ul {
+            list-style: none;
+            display: flex;
+        }
+        .navbar ul li {
+            margin: 0 15px;
+        }
+        .navbar ul li a {
+            text-decoration: none;
+            color: white;
+            font-size: 18px;
+        }
+        .navbar ul li a:hover {
+            text-decoration: underline;
+        }
+        /* Sidebar styles */
+        .sidebar {
+            width: 250px;
+            background: rgb(88, 82, 82);
+            color: white;
+            padding: 20px;
+            height: 100vh;
+            position: fixed;
+            overflow-y: auto;
+            top: 50px;
+        }
+        .sidebar h2 {
+            font-size: 22px;
+            margin-bottom: 15px;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar ul li {
+            padding: 10px;
+            cursor: pointer;
+            background: #B5828C;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            text-align: left;
+        }
+        .sidebar ul li:hover {
+            background: #A66A7A;
+        }
+        .dropdown {
+            display: none;
+            list-style: none;
+            padding-left: 20px;
+        }
+        .dropdown li {
+            background: #D9A7B0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px;
+        }
+        .dropdown li input {
+            margin-left: 10px;
+        }
+        .content {
+            margin-left: 270px;
+            padding: 80px 20px 20px;
+            width: calc(100% - 270px);
+        }
+        h1, h3 {
+            text-align: center;
+            color: #333;
+        }
+        .search-bar {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        select, input {
+            padding: 10px;
+            width: 80%;
+            max-width: 400px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .products {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            justify-content: center;
+        }
+        .product-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .product-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+         /* Custom Alert */
+.custom-alert {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #E5989B;
+    color: #5a2a2a;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 300px;
+}
+.custom-alert button {
+    margin-top: 10px;
+    background: #B5828C;
+    border: none;
+    padding: 5px 10px;
+    color: white;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+/* Add to Cart Button */
+button.add-to-cart {
+    background: #B5828C;
+    color: white;
+    font-size: 16px;
+    font-family: 'Great Vibes', cursive;
+    border: none;
+    padding: 10px;
+    width: 100%;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+button.add-to-cart:hover {
+    background: #A66A7A;
+}
+
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Ornafy</div>
+        <ul>
+            <li><a href="home.html">Home</a></li>
+            <li><a href="products.html">Products</a></li>
+            <li><a href="cart.html">My Cart</a></li>
+            <li><a href="contact.html">Contact Info</a></li>
+            <li><a href="signup.html">Sign Up</a></li>
+        </ul>
+    </nav>
+
+    <div class="sidebar">
+        <h2>Categories</h2>
+        <ul>
+            <li onclick="filterCategory('all')">All</li>
+            <li onclick="filterCategory('24K')">24K Gold</li>
+            <li onclick="filterCategory('22K')">22K Gold</li>
+            <li onclick="filterCategory('18K')">18K Gold</li>
+            <li onclick="filterCategory('14K')">14K Gold</li>
+            <li onclick="filterCategory('13K')">13K Gold</li>
+            <li onclick="filterCategory('1gm')">1-Gram Gold</li>
+            <li><a href="ai.html" style="color: white; text-decoration: none;">🔍 AI Customization</a></li>
+            <li onclick="location.href='home.html'">Logout</li>
+        </ul>
+    </div>
+    
+
+    <div class="content">
+        <h1>Ornafy</h1>
+        <h3>One Stand Destination for all the Eligance</h3> 
+        <div class="search-bar">
+            <input type="text" id="search" placeholder="Search for jewelry..." onkeyup="searchJewelry()">
+        </div>
+        <div class="products" id="products">
+            <!-- Products will be inserted here by JavaScript -->
+        </div>
+    </div>
+
+    <div id="custom-alert" class="custom-alert">
+        <p id="alert-message"></p>
+        <button onclick="closeAlert()">OK</button>
+    </div>
+    
+
+    <script>
+        const jewelryItems = [
+            { name: "Gold Necklace (24K)", price: "₹50,000", category: "24K", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSb1rU8TMy_vkB6JLPm1jerUts2UpHIHmdM2g&s" },
+            { name: "Gold Ring (22K)", price: "₹25,000", category: "22K", image: "https://img.tatacliq.com/images/i16//437Wx649H/MP000000021200981_437Wx649H_202402160542161.jpeg" },
+            { name: "Gold Earrings (18K)", price: "₹15,000", category: "18K", image: "https://atjewels.in/cdn/shop/products/jj.jpg?v=1639391681" },
+            { name: "Gold Bracelet (14K)", price: "₹10,000", category: "14K", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR82OeTAyB6tWPX5j5fLMpp2OdrKuFQoFwiPA&s" },
+            { name: "Gold Pendant (13K)", price: "₹7,000", category: "13K", image: "https://www.goldspoonjewelry.com/cdn/shop/products/20190327_122931re_800x.jpg?v=1559064481" },
+            { name: "1-Gram Gold Ring", price: "₹5,000", category: "1gm", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQsrxEtl8HZLCdWpfA3zFwKWRgqt2kcFyntCA&s" },
+           
+            { name: "Gold Necklace-2 (24K)", price: "₹70,000", category: "24K", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJpIauCWA9DeXq-g5rE33YxfhrWK78P2SdjA&s" },
+            { name: "Gold Ring-2 (22K)", price: "₹50,000", category: "22K", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbBxu86U66pwjaGPFqHNnh1Z6Iad_Fyh_FxQ&s" },
+            { name: "Gold Earrings-2 (18K)", price: "₹32,000", category: "18K", image: "https://www.avartajewellery.com/wp-content/uploads/2022/02/AVER066_18K.90.jpg" },
+            { name: "Gold Bracelet-2 (14K)", price: "₹18,000", category: "14K", image: "https://m.media-amazon.com/images/I/61k-Zl8C7CL._AC_UY1000_.jpg" },
+            { name: "Gold Pendant-2 (13K)", price: "₹9,000", category: "13K", image: "https://suzannekalan.com/cdn/shop/products/PN530-WT-YG-1_web.jpg?v=1671702655&width=2048" },
+            { name: "1-Gram Gold Ring-2", price: "₹6,000", category: "1gm", image: "https://cdn.caratlane.com/media/catalog/product/cache/6/image/480x480/9df78eab33525d08d6e5fb8d27136e95/J/R/JR07849-1YP600_11_listfront.jpg" },
+           
+            { name: "Gold Necklace-3 (24K)", price: "₹50,000", category: "24K", image: "https://www.chidambaramgoldcovering.com/image/cache/catalog/ChidambaramGoldCovering/pendants/smdr2347-new-flexible-fish-ruby-stone-one-gram-gold-short-pendant-chain-shop-online-3-850x1000.jpg" },
+            { name: "Gold Ring-3 (22K)", price: "₹25,000", category: "22K", image: "https://cdn.caratlane.com/media/catalog/product/cache/6/image/480x480/9df78eab33525d08d6e5fb8d27136e95/J/R/JR07847-1YP900_11_listfront.jpg" },
+            { name: "Gold Earrings-3 (18K)", price: "₹15,000", category: "18K", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSsFDPEvgtdh1KyaLtD4oO5eF2y6P7qWmmK6qOmpG0TCmMXp5qRrK1haK2w_iJTYe8AjOg&usqp=CAU" },
+            { name: "Gold Bracelet-3 (14K)", price: "₹10,000", category: "14K", image: "https://www.candere.com/media/jewellery/images/C024253___1.jpeg" },
+            { name: "Gold Pendan-3t (13K)", price: "₹7,000", category: "13K", image: "https://www.goldspoonjewelry.com/cdn/shop/products/20190327_122931re_800x.jpg?v=1559064481" },
+            { name: "1-Gram Gold Pendant-3", price: "₹5,000", category: "1gm", image: "https://assets.ajio.com/medias/sys_master/root/20211006/DyWY/615d1f47f997ddce89024d63/-473Wx593H-6005660300-multi-MODEL.jpg" },
+           
+            { name: "Gold Necklace-2-4 (24K)", price: "₹70,000", category: "24K", image: "https://cdn.shopclues.com/images1/thumbnails/99083/320/320/145316651-99083690-1669601465.jpg" },
+            { name: "Gold Ring-2-4 (22K)", price: "₹50,000", category: "22K", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0fwSglCh_9mn7wZKTOSAGcnG9mTe6UcxvOw&s" },
+            { name: "Gold Earrings-2-4 (18K)", price: "₹32,000", category: "18K", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSD2bjHjl3ZMNA1rikzSYAKqCD_gibLuUDAmw&s" },
+            { name: "Gold Bracelet-2-4 (14K)", price: "₹18,000", category: "14K", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-nuAom4OumvIrEJUrUdtr3VLh7O3t-74nWg&s" },
+            { name: "Gold Pendant-2-4 (13K)", price: "₹9,000", category: "13K", image: "https://mohanjewellery.com/wp-content/uploads/2021/01/JKPD006_1580142651.jpg" },
+            { name: "1-Gram Gold Ring-2-4", price: "₹6,000", category: "1gm", image: "https://img.tatacliq.com/images/i13/437Wx649H/MP000000019443556_437Wx649H_202309271238084.jpeg" }
+            ];
+
+
+            function displayProducts(items) {
+                const productContainer = document.getElementById("products");
+                productContainer.innerHTML = "";
+                items.forEach(item => {
+                    productContainer.innerHTML += `
+                        <div class="product-card">
+                            <img src="${item.image}" alt="${item.name}">
+                            <h2>${item.name}</h2>
+                            <p>${item.price}</p>
+                            <button class="add-to-cart" onclick="addToCart('${item.name}', '${item.price}', '${item.image}')">Add to Cart</button>
+                        </div>
+                    `;
+                });
+            }
+            
+
+        function searchJewelry() {
+            let query = document.getElementById("search").value.toLowerCase();
+            let filteredItems = jewelryItems.filter(item => item.name.toLowerCase().includes(query));
+            displayProducts(filteredItems);
+        }
+
+        function filterCategory(category) {
+            if (category === "all") {
+                displayProducts(jewelryItems);
+            } else {
+                let filteredItems = jewelryItems.filter(item => item.category === category);
+                displayProducts(filteredItems);
+            }
+        }
+
+        // Display all products by default
+        displayProducts(jewelryItems);
+
+        function addToCart(name, price, image) {
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+            cart.push({ name, price, image });
+            localStorage.setItem("cart", JSON.stringify(cart));
+        
+            // Show the custom alert instead of default alert
+            document.getElementById("alert-message").innerText = "Item added to cart!";
+            document.getElementById("custom-alert").style.display = "block";
+        }
+        
+        // Function to close the alert
+        function closeAlert() {
+            document.getElementById("custom-alert").style.display = "none";
+        }
+
+    
+        
+        
+    </script>
+</body>
+</html>
