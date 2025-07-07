@@ -31,7 +31,7 @@ laying the groundwork for future interactive experiences.
 
 ## 🌐 Live Demo
 
-🔗 [Click here to view the live site]( https://aaliyapatel-11.github.io/Ornafy/)
+🔗 [Click here to view the live site](https://aaliyapatel-11.github.io/Ornafy/)
 
 
 ---
