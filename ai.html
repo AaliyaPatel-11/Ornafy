@@ -119,121 +119,72 @@
     <p id="alert-message"></p>
     <button onclick="closeAlert()">OK</button>
   </div>
+<script>
+  function showAlert(message) {
+    document.getElementById("alert-message").innerText = message;
+    document.getElementById("custom-alert").style.display = "block";
+  }
 
-  <script>
-    function showAlert(message) {
-      document.getElementById("alert-message").innerText = message;
-      document.getElementById("custom-alert").style.display = "block";
-    }
+  function closeAlert() {
+    document.getElementById("custom-alert").style.display = "none";
+  }
 
-    function closeAlert() {
-      document.getElementById("custom-alert").style.display = "none";
-    }
+  function customizeJewelry() {
+    const type = document.getElementById("jewelryType").value;
+    const metal = document.getElementById("metalType").value;
+    const stone = document.getElementById("stoneType").value;
+    const description = document.getElementById("designDescription").value;
 
-    function customizeJewelry() {
-      const type = document.getElementById("jewelryType").value;
-      const metal = document.getElementById("metalType").value;
-      const stone = document.getElementById("stoneType").value;
-      const description = document.getElementById("designDescription").value;
+    // Pricing logic
+    let price = 5000;
 
-      // Pricing logic
-      let price = 5000;
-      if (metal === "Gold") price += 20000;
-      else if (metal === "Silver") price += 5000;
-      else if (metal === "Platinum") price += 30000;
+    if (metal === "Gold") price += 20000;
+    else if (metal === "Silver") price += 5000;
+    else if (metal === "Platinum") price += 30000;
 
-      if (stone === "Diamond") price += 25000;
-      else if (stone === "Ruby") price += 10000;
-      else if (stone === "Emerald") price += 12000;
+    if (stone === "Diamond") price += 25000;
+    else if (stone === "Ruby") price += 10000;
+    else if (stone === "Emerald") price += 12000;
 
-      // Image selection
-      const key = `${type}-${metal}-${stone}`;
-      const imageMap = {
-        "Ring-Gold-Diamond": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSU5Xyvl8eiuVg79PM3cf0T-1dCY_RSxw30Og&s",
-        "Ring-Gold-Ruby": "https://kinclimg2.bluestone.com/f_jpg,c_scale,w_1024,q_80,b_rgb:f0f0f0/giproduct/BM-R02_YAA18SYRUXXXXXXXX_ABCD00-PICS-00001-1024-64633.png",
-        "Ring-Gold-Emerald": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2sa0OKZZfnwKkyaJwMbXuh5Uu8XCcOfguRA&s",
-        "Ring-Gold-No Stone": "https://kinclimg2.bluestone.com/f_jpg,c_scale,w_828,q_80,b_rgb:f0f0f0/giproduct/BIPO0710R08_YAA22XXXXXXXXXXXX_ABCD00-PICS-00001-1024-54568.png",
+    fetch("dataset.json")
+      .then(response => response.json())
+      .then(dataset => {
 
-        "Ring-Silver-Diamond": "https://ornatejewels.com/cdn/shop/files/SSR2113W_W.jpg?v=1744010211&width=900",
-        "Ring-Silver-Ruby": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwqYw9IK5ZlEeuy_qjJ0sXbBxfd6ihYN9L9Q&s",
-        "Ring-Silver-Emerald": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwG5Y-PNxnHYIvPIfvzoH3va2vsElvtr1GoSOYEKG24BBiitIkoY_Oa5fKY4N9DB0q_8Q&usqp=CAU",
-        "Ring-Silver-No Stone": "https://sparkleandjade.com/cdn/shop/files/QSK2221_2048x.jpg?v=1705292009",
+        const match = dataset.find(item =>
+          item.jewelry_type === type &&
+          item.metal_type === metal &&
+          item.stone_type === stone
+        );
 
-        "Ring-Platinum-Diamond": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTp0Xb-4PrXpqmEP6K-DUYzWHUjqanMjJroAQ&s",
-        "Ring-Platinum-Ruby": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_8N4poVJ1vzgOrTwkQexFrhMi1GviyztROA&s",
-        "Ring-Platinum-Emerald": "https://www.northumberlandgoldsmiths.com/wp-content/uploads/2019/09/NGS4319EM-platinum-diamond-oval-emerald-cluster-engagement-ring.jpg",
-        "Ring-Platinum-No Stone": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQuT8rT4PfY1FwemTXtqC9CFFaN_N-pAzx2dw&s",
+        const imageUrl = match
+          ? match.image_url
+          : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSU5Xyvl8eiuVg79PM3cf0T-1dCY_RSxw30Og&s";
 
-        "Necklace-Gold-Diamond": "https://www.candere.com/media/jewellery/images/KC04451YG__1_1.jpeg",
-        "Necklace-Gold-Ruby": "https://assets.angara.com/pendant/sp1087r/4mm-aaaa-ruby-yellow-gold-pendant.jpg",
-        "Necklace-Gold-Emerald": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRjZpPYLU30H3sr8E_CaQSBHlyGAWFtmFiGA&s",
-        "Necklace-Gold-No Stone": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQGCtXD5A_8Bodtzgl84YKI2GJ0t-GheiVMgv_OOQnAS4L4RSeZiTsDa8KXaSHd1QCOcC8&usqp=CAU",
+        document.getElementById("preview").innerHTML = `
+          <h3>Customized Jewelry</h3>
+          <p><strong>Type:</strong> ${type}</p>
+          <p><strong>Metal:</strong> ${metal}</p>
+          <p><strong>Stone:</strong> ${stone}</p>
+          <p><strong>Description:</strong> ${description}</p>
+          <p><strong>AI Predicted Price:</strong> ₹${price.toLocaleString()}</p>
+          <img src="${imageUrl}" alt="Customized Jewelry"/>
+          <button onclick="addToCart('${type} (${metal})', '₹${price.toLocaleString()}', '${imageUrl}')">Add to Cart</button>
+          <p><em>Generated using Ornafy AI v1.0</em></p>
+        `;
+      })
+      .catch(error => {
+        console.error("Dataset Error:", error);
+      });
+  }
 
-        "Necklace-Silver-Diamond": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKgaeQnXk2qUuSIcBfWTjELawpgWH4HWya0w&s",
-        "Necklace-Silver-Ruby": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpP1ioHMrTd4R97zuzYsG_rrYkEBVlBJdLLQ&s",
-        "Necklace-Silver-Emerald": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgyxDpjN-4Ovlnqaj87Awq0bTLt_rTrHeD6OQqWYUClDaJnFuodLEdrTT5L40_waqM0Gc&usqp=CAU",
-        "Necklace-Silver-No Stone": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR5ZrwSqkty2o-SzUPoBuM8ur4_QHJPyC9rzA&s",
+  function addToCart(name, price, image) {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    cart.push({ name, price, image });
+    localStorage.setItem("cart", JSON.stringify(cart));
+    showAlert("Item added to cart!");
+  }
+</script>
 
-        "Necklace-Platinum-Diamond": "https://robinsonsjewelers.com/cdn/shop/files/j-e-caldwell-platinum-diamond-pendant-necklace-with-teardrop-design-3-85-carat-total-diamond-weight-rr9632-1.jpg?v=1721637087&width=800",
-        "Necklace-Platinum-Ruby": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_2jKp5KB0AkEv4ckaRbJssxTySNA39SLQ-w&s",
-        "Necklace-Platinum-Emerald": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTd-lF9tihJYemokmaAx_xuz0QQXqKw9jvNCw&s",
-        "Necklace-Platinum-No Stone": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_hvyroQPmgcEJekXFnuCuVeY6mVW8Gg2NGc9G50ppUFy62awT7JGvVwh1-_InAC_cpgA&usqp=CAU",
-
-        "Bracelet-Gold-Diamond": "https://i.etsystatic.com/27585129/r/il/70100d/5551301845/il_570xN.5551301845_5jt4.jpg",
-        "Bracelet-Gold-Ruby": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ1JCxBd_XP9uisQiDy886Gms1d27Ld7uIBIw&s",
-        "Bracelet-Gold-Emerald": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR9Qm3M8ZumeO3snAyF4ilGhhhovNGtZxCUHCsR4Lx83Peg8FQrBV7ebC-Rc4ca2PZijm0&usqp=CAU",
-        "Bracelet-Gold-No Stone": "https://kinclimg3.bluestone.com/f_jpg,c_scale,w_828,q_80,b_rgb:f0f0f0/giproduct/BVCK0530V23_YAA22XXXXXXXXXXXX_ABCD00-PICS-00000-1024-35261.png",
-
-        "Bracelet-Silver-Diamond": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTjbsHow-4JmJZwIFn5ABuWVCZvXQ6Gp1_s3Q&s",
-        "Bracelet-Silver-Ruby": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS27eE9Zzj8qR2gQ7UHoqjz_-owFYiA5ZSq1Q&s",
-        "Bracelet-Silver-Emerald": "https://www.nafisadesigns.com/media/catalog/product/cache/3893803f2ab3f3c4bbb693381a6901b3/e/c/ecbr634-2.jpg",
-        "Bracelet-Silver-No Stone": "https://www.truesilver.co.in/cdn/shop/files/BR108476S7HIA18RH_1_600x.jpg?v=1689920256",
-
-        "Bracelet-Platinum-Diamond": "https://i.pinimg.com/736x/b1/5e/ec/b15eecf4f93d80757afdd6166cfe584e.jpg",
-        "Bracelet-Platinum-Ruby": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRa_N_BxhbnRkIP_YTxVG0-xVYD7woxQZuS5g&s",
-        "Bracelet-Platinum-Emerald": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSdEj8dH8TFrrIa2TFaT12WoQRORDuUeDH5UquGOpN0ERhTt6scmA6i2PVCB6oiNO7Xegs&usqp=CAU",
-        "Bracelet-Platinum-No Stone": "https://www.jewelove.in/cdn/shop/files/jewelove-japanese-platinum-light-weight-bracelet-diamond-cut-balls-bracelet-for-women-jl-ptb-1071-41830464291057.jpg?v=1726358374",
-
-        "Earrings-Gold-Diamond": "https://d322s37z6qhrgo.cloudfront.net/wp-content/uploads/2023/12/WER0497-2-600x600.jpg",
-        "Earrings-Gold-Ruby": "https://i.etsystatic.com/5810658/r/il/a77319/2915650355/il_570xN.2915650355_rl0l.jpg",
-        "Earrings-Gold-Emerald": "https://www.wallacebishop.com.au/cdn/shop/files/created-emerald-and-diamond-twist-pear-shape-drop-earrings-in-9ct-yellow-gold-wallace-bishop-1_99a266f1-da26-43b5-80e4-7bb68472a5c9_1200x.png?v=1689669261",
-        "Earrings-Gold-No Stone": "https://assets.ajio.com/medias/sys_master/root/20240904/8zBl/66d8663b1d763220fac22abd/-1117Wx1400H-6007138300-multi-MODEL.jpg",
-
-        "Earrings-Silver-Diamond": "https://vembley.com/cdn/shop/products/1_691cbfb7-6c9e-47e1-b8bb-b1a113c82a75.jpg?v=1665486258",
-        "Earrings-Silver-Ruby": "https://caratcafe.in/cdn/shop/products/Earring-WG20_2.jpg?v=1642661653&width=1445",
-        "Earrings-Silver-Emerald": "https://salera.com.au/cdn/shop/products/780116.png?v=1575338856",
-        "Earrings-Silver-No Stone": "https://media.kohlsimg.com/is/image/kohls/3382512?wid=620&hei=620&op_sharpen=1",
-
-        "Earrings-Platinum-Diamond": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEDqRHKKbj_z4ixjkHkTk1QXeal1A2RJMeIA&s",
-        "Earrings-Platinum-Ruby": "https://www.barkevs.com/themes/bliss/assets/earrings/rb-5593er/shapes/round/rb-5593er-whitegold_platinum_round_default.jpg",
-        "Earrings-Platinum-Emerald": "https://aguadeoro.ch/cdn/shop/products/ADO_6081.jpg?v=1626369260",
-        "Earrings-Platinum-No Stone": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0Aa4Ba7wSpVHhX8HPd4e3o5JIv612r-f1-g&s",
-
-       
-      // Add more unique combos as needed
-      };
-      const imageUrl = imageMap[key] || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSU5Xyvl8eiuVg79PM3cf0T-1dCY_RSxw30Og&s";
-
-      // Show preview
-      document.getElementById("preview").innerHTML = `
-        <h3>Customized Jewelry</h3>
-        <p><strong>Type:</strong> ${type}</p>
-        <p><strong>Metal:</strong> ${metal}</p>
-        <p><strong>Stone:</strong> ${stone}</p>
-        <p><strong>Description:</strong> ${description}</p>
-        <p><strong>Approx Price:</strong> ₹${price.toLocaleString()}</p>
-        <img src="${imageUrl}" alt="Customized Jewelry"/>
-        <button onclick="addToCart('${type} (${metal})', '₹${price.toLocaleString()}', '${imageUrl}')">Add to Cart</button>
-      `;
-    }
-
-    function addToCart(name, price, image) {
-      let cart = JSON.parse(localStorage.getItem("cart")) || [];
-      cart.push({ name, price, image });
-      localStorage.setItem("cart", JSON.stringify(cart));
-      showAlert("Item added to cart!");
-    }
-  </script>
 </body>
 </html>
 
