@@ -204,6 +204,10 @@
 
       if(contentType.includes("application/json")){
       const data = await response.json();
+
+      document.getElementById("loading").style.display = "none";
+      document.querySelector("button").disabled = false;
+
       alert(data.error);
       return;
       }
@@ -212,6 +216,8 @@
 
      })
      .then(blob => {
+
+      if(!blob) return;
 
       const endTime = Date.now();
       const seconds = ((endTime - startTime) / 1000).toFixed(2);
