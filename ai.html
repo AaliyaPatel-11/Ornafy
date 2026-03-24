@@ -165,7 +165,7 @@
 
   let price = 0;
 
-  fetch("http://127.0.0.1:5000/predict_price", {
+  fetch("https://ornafy.onrender.com/predict_price", {
     method: "POST",
     headers: {
      "Content-Type": "application/json"
@@ -186,7 +186,7 @@
 
   function generateImage(price) {
 
-    fetch("http://127.0.0.1:5000/generate_jewelry", {
+    fetch("https://ornafy.onrender.com/generate_jewelry", {
      method: "POST",
      headers: {
       "Content-Type": "application/json"
