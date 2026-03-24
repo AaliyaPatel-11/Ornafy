@@ -200,7 +200,7 @@
      })
      .then(async response => {
 
-      const contentType = response.headers.get("content-type");
+      const contentType = response.headers.get("content-type")|| "";
 
       if(contentType.includes("application/json")){
       const data = await response.json();
@@ -215,41 +215,49 @@
       return response.blob();
 
      })
-     .then(blob => {
 
-      if(!blob) return;
+.then(blob => {
 
-      const endTime = Date.now();
-      const seconds = ((endTime - startTime) / 1000).toFixed(2);
-
-      document.getElementById("generationTime").innerText =
-      `⏱ Generated in ${seconds} seconds`;
-
-      const reader = new FileReader();
-
-      reader.onloadend = function () {
-
-      const imageUrl = reader.result;
-
+    if(!blob){
       document.getElementById("loading").style.display = "none";
       document.querySelector("button").disabled = false;
+      return;
+   }
 
-       document.getElementById("preview").innerHTML = `
-       <h3>AI Generated Jewelry</h3>
-       <p><strong>Type:</strong> ${type}</p>
-       <p><strong>Metal:</strong> ${metal}</p>
-       <p><strong>Stone:</strong> ${stone}</p>
-       <p><strong>Description:</strong> ${description}</p>
-       <p><strong>AI Predicted Price:</strong> ₹${price.toLocaleString()}</p>
-       <img src="${imageUrl}" alt="Generated Jewelry"/>
-       <p><strong>Generation Time:</strong> ${seconds} seconds</p>
-       <button onclick="addToCart('${type} (${metal})', '₹${price.toLocaleString()}', '${imageUrl}')">Add to Cart</button>
-       `;
-      };
-      reader.readAsDataURL(blob);
-     })
-  }
-  }
+    const endTime = Date.now();
+    const seconds = ((endTime - startTime) / 1000).toFixed(2);
+
+    document.getElementById("generationTime").innerText =
+    `⏱ Generated in ${seconds} seconds`;
+
+    const reader = new FileReader();
+
+    reader.onloadend = function () {
+
+    const imageUrl = reader.result;
+
+    document.getElementById("loading").style.display = "none";
+    document.querySelector("button").disabled = false;
+
+   document.getElementById("preview").innerHTML = `
+   <h3>AI Generated Jewelry</h3>
+   <p><strong>Type:</strong> ${type}</p>
+   <p><strong>Metal:</strong> ${metal}</p>
+   <p><strong>Stone:</strong> ${stone}</p>
+   <p><strong>Description:</strong> ${description}</p>
+   <p><strong>AI Predicted Price:</strong> ₹${price.toLocaleString()}</p>
+   <img src="${imageUrl}" alt="Generated Jewelry"/>
+   <p><strong>Generation Time:</strong> ${seconds} seconds</p>
+   <button onclick="addToCart('${type} (${metal})', '₹${price.toLocaleString()}', '${imageUrl}')">Add to Cart</button>
+   `;
+
+  };
+
+ reader.readAsDataURL(blob);
+
+ });
+}
+
 
   function addToCart(name, price, image) {
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
