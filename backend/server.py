@@ -32,6 +32,10 @@ def create_db():
 
 create_db()
 
+@app.route("/")
+def home():
+    return "Ornafy backend running"
+
 @app.route("/signup", methods=["POST"])
 def signup():
 
