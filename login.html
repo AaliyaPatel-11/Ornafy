@@ -72,12 +72,43 @@
         
 
 </head>
+<script>
+
+async function loginUser(){
+
+let contact = document.getElementById("contact").value;
+let password = document.getElementById("password").value;
+
+let response = await fetch("http://127.0.0.1:5000/login",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+contact:contact,
+password:password
+})
+});
+
+let data = await response.json();
+
+if(data.status === "success"){
+window.location.href="products.html";
+}
+else{
+document.getElementById("errorMsg").innerText="Invalid login";
+}
+
+}
+
+</script>
 <body>
     <div class="login-container">
         <h2>Ornafy Login</h2>
-        <input type="email" placeholder="Email" required>
-        <input type="password" placeholder="Password" required>
-        <button type="submit" onclick="window.location.href='products.html'">Login</button>
+        <input type="text" id="contact" placeholder="Email or Phone">
+        <input type="password" id="password" placeholder="Password">
+        <p id="errorMsg" style="color:red;"></p>
+        <button onclick="loginUser()">Login</button>
         <p class="signup">Don't have an account? <a href="signup.html">Sign Up</a></p>
     </div>
 </body>

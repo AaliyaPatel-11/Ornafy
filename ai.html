@@ -32,7 +32,7 @@
       padding: 25px; border-radius: 10px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
-    select, button, textarea {
+    select, button,textarea{
       width: 100%; padding: 12px; margin: 10px 0;
       border-radius: 5px; border: 1px solid #E5989B; font-size: 16px;
     }
@@ -61,6 +61,19 @@
       margin-top: 10px; background: #B5828C;
       border: none; padding: 5px 10px;
       color: white; border-radius: 3px; cursor: pointer;
+    }
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #B5828C;
+      border-radius: 50%;
+      width: 35px;
+      height: 35px;
+      animation: spin 1s linear infinite;
+      margin: 10px auto;
+   }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
   </style>
 </head>
@@ -105,9 +118,16 @@
     </select>
 
     <label for="designDescription">Describe Your Custom Design:</label>
-    <textarea id="designDescription" rows="3" placeholder="Enter design details..."></textarea>
+    <textarea id="designDescription" rows="3" placeholder="Enter design details...
+    Example: vintage floral ring with twisted band and leaf pattern"></textarea>
 
     <button onclick="customizeJewelry()">Customize</button>
+
+    <div id="loading" style="display:none; text-align:center;">
+     <div class="spinner"></div>
+      <p> Ornafy-Ai is designing your jewelry...</p>
+      <p id="generationTime"></p>
+    </div>
 
     <div class="preview" id="preview">
       <p>Select options and click 'Customize' to see a preview.</p>
@@ -119,6 +139,7 @@
     <p id="alert-message"></p>
     <button onclick="closeAlert()">OK</button>
   </div>
+
 <script>
   function showAlert(message) {
     document.getElementById("alert-message").innerText = message;
@@ -130,51 +151,86 @@
   }
 
   function customizeJewelry() {
+
+    const startTime = Date.now();
+
+    document.querySelector("button").disabled = true;
+    document.getElementById("loading").style.display = "block";
+    
+
     const type = document.getElementById("jewelryType").value;
     const metal = document.getElementById("metalType").value;
     const stone = document.getElementById("stoneType").value;
     const description = document.getElementById("designDescription").value;
 
-    // Pricing logic
-    let price = 5000;
+  let price = 0;
 
-    if (metal === "Gold") price += 20000;
-    else if (metal === "Silver") price += 5000;
-    else if (metal === "Platinum") price += 30000;
+  fetch("http://127.0.0.1:5000/predict_price", {
+    method: "POST",
+    headers: {
+     "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      type: type,
+      metal: metal,
+      stone: stone
+    })
+ })
+  .then(res => res.json())
+  .then(data => {
 
-    if (stone === "Diamond") price += 25000;
-    else if (stone === "Ruby") price += 10000;
-    else if (stone === "Emerald") price += 12000;
+    price = data.price;
+    generateImage(price);
 
-    fetch("dataset.json")
-      .then(response => response.json())
-      .then(dataset => {
+  });
 
-        const match = dataset.find(item =>
-          item.jewelry_type === type &&
-          item.metal_type === metal &&
-          item.stone_type === stone
-        );
+  function generateImage(price) {
 
-        const imageUrl = match
-          ? match.image_url
-          : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSU5Xyvl8eiuVg79PM3cf0T-1dCY_RSxw30Og&s";
-
-        document.getElementById("preview").innerHTML = `
-          <h3>Customized Jewelry</h3>
-          <p><strong>Type:</strong> ${type}</p>
-          <p><strong>Metal:</strong> ${metal}</p>
-          <p><strong>Stone:</strong> ${stone}</p>
-          <p><strong>Description:</strong> ${description}</p>
-          <p><strong>AI Predicted Price:</strong> ₹${price.toLocaleString()}</p>
-          <img src="${imageUrl}" alt="Customized Jewelry"/>
-          <button onclick="addToCart('${type} (${metal})', '₹${price.toLocaleString()}', '${imageUrl}')">Add to Cart</button>
-          <p><em>Generated using Ornafy AI v1.0</em></p>
-        `;
+    fetch("http://127.0.0.1:5000/generate_jewelry", {
+     method: "POST",
+     headers: {
+      "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+      type: type,
+      metal: metal,
+      stone: stone,
+      description: description
       })
-      .catch(error => {
-        console.error("Dataset Error:", error);
-      });
+     })
+     .then(response => response.blob())
+     .then(blob => {
+
+      const endTime = Date.now();
+      const seconds = ((endTime - startTime) / 1000).toFixed(2);
+
+      document.getElementById("generationTime").innerText =
+      `⏱ Generated in ${seconds} seconds`;
+
+      const reader = new FileReader();
+
+      reader.onloadend = function () {
+
+      const imageUrl = reader.result;
+
+      document.getElementById("loading").style.display = "none";
+      document.querySelector("button").disabled = false;
+
+       document.getElementById("preview").innerHTML = `
+       <h3>AI Generated Jewelry</h3>
+       <p><strong>Type:</strong> ${type}</p>
+       <p><strong>Metal:</strong> ${metal}</p>
+       <p><strong>Stone:</strong> ${stone}</p>
+       <p><strong>Description:</strong> ${description}</p>
+       <p><strong>AI Predicted Price:</strong> ₹${price.toLocaleString()}</p>
+       <img src="${imageUrl}" alt="Generated Jewelry"/>
+       <p><strong>Generation Time:</strong> ${seconds} seconds</p>
+       <button onclick="addToCart('${type} (${metal})', '₹${price.toLocaleString()}', '${imageUrl}')">Add to Cart</button>
+       `;
+      };
+      reader.readAsDataURL(blob);
+     })
+  }
   }
 
   function addToCart(name, price, image) {

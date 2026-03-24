@@ -74,19 +74,99 @@
     </style>
     
 </head>
+<script>
+
+let verified = false;
+
+function showVerification(){
+
+let contact = document.getElementById("contact").value;
+let errorMsg = document.getElementById("errorMsg");
+
+let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+let phoneRegex = /^[0-9]{10}$/;
+
+if(emailRegex.test(contact) || phoneRegex.test(contact)){
+verified = true;
+errorMsg.style.color="green";
+errorMsg.innerText="Verified ✓";
+}
+
+else{
+errorMsg.style.color = "red";
+errorMsg.innerText = "Enter a valid email or 10-digit phone number";
+}
+
+}
+
+async function signupUser() {
+
+if(!verified){
+errorMsg.innerText = "Please verify your email or phone first";
+return;
+}
+
+let firstName = document.getElementById("firstName").value;
+let lastName = document.getElementById("lastName").value;
+let contact = document.getElementById("contact").value;
+let password = document.getElementById("password").value;
+let confirmPassword = document.getElementById("confirmPassword").value;
+
+let errorMsg = document.getElementById("errorMsg");
+
+if(password !== confirmPassword){
+errorMsg.innerText = "Passwords do not match";
+return;
+}
+
+let passwordRegex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$/;
+
+if(!passwordRegex.test(password)){
+errorMsg.innerText =
+"Password must contain 8 characters, 1 capital letter, 1 number and 1 special symbol.";
+return;
+}
+
+let response = await fetch("http://127.0.0.1:5000/signup",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+firstName:firstName,
+lastName:lastName,
+contact:contact,
+password:password
+})
+});
+
+let data = await response.json();
+
+if(data.status === "success"){
+alert("Signup successful!");
+window.location.href="login.html";
+}
+else{
+errorMsg.innerText = data.message;
+}
+
+}
+
+</script>
 <body>
     <div class="signup-container">
         <h2>Ornafy Sign Up</h2>
-        <input type="text" placeholder="First Name" required>
-        <input type="text" placeholder="Last Name" required>
+        <input type="text" id="firstName" placeholder="First Name" required>
+        <input type="text" id="lastName" placeholder="Last Name" required>
         <input type="text" id="contact" placeholder="Email or Phone Number" required>
         <button type="button" onclick="showVerification()">Verify</button>
         <div id="verify-section" class="verification-code">
             <input type="text" placeholder="Enter Verification Code" required>
         </div>
-        <input type="password" placeholder="Password" required>
-        <input type="password" placeholder="Re-enter Password" required>
-        <button type="submit" onclick="window.location.href='products.html'">Sign Up</button>
+        <input type="password" id="password" placeholder="Password" required>
+        <input type="password" id="confirmPassword" placeholder="Re-enter Password" required>
+        <p id="errorMsg" style="color:red; font-size:13px;"></p>
+        <button type="button" onclick="signupUser()">Sign Up</button>
         <p class="login-link">Already have an account? <a href="login.html">Login</a></p>
     </div>
 </body>
