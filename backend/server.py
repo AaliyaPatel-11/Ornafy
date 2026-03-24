@@ -121,10 +121,12 @@ def generate_jewelry():
     print("Status Code:", response.status_code)
     print("Content Type:", response.headers.get("content-type"))
 
-    if "application/json" in response.headers.get("content-type", ""):
-        print("HuggingFace Response:", response.json())
-        return jsonify(response.json())
-
+    content_type = response.headers.get("content-type", "")
+    if "application/json" in content_type:
+        print("HuggingFace error:", response.json())
+        return jsonify({
+        "error": "AI model is warming up. Please try again in a few seconds."
+        })
     return Response(response.content, mimetype="image/png")
 
 @app.route("/predict_price", methods=["POST"])

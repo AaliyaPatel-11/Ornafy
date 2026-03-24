@@ -198,7 +198,19 @@
       description: description
       })
      })
-     .then(response => response.blob())
+     .then(async response => {
+
+      const contentType = response.headers.get("content-type");
+
+      if(contentType.includes("application/json")){
+      const data = await response.json();
+      alert(data.error);
+      return;
+      }
+
+      return response.blob();
+
+     })
      .then(blob => {
 
       const endTime = Date.now();
